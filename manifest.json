@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "DOM Listener extension",
+    "version": "0.1",
+    "description": "Logs all DOM mutation events to the DevTools console.",
+    "icons": {
+        "128": "ico/logo.png"
+    },
+    "permissions": [
+        "tabs",
+        "*://*/*"
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "browser_action": {
+        "default_icon": "ico/ear-off.png",
+        "default_title": "Listen for DOM events"
+    }
+}
