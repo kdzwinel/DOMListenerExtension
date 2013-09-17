@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "DOMListener",
-    "version": "0.12",
+    "version": "0.13",
     "description": "Logs all DOM mutation events to the DevTools console.",
     "icons": {
         "128": "ico/logo_128.png",
@@ -9,7 +9,7 @@
     },
     "permissions": [
         "tabs",
-        "*://*/*"
+        "<all_urls>"
     ],
     "background": {
         "scripts": ["background.js"]

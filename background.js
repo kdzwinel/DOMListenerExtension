@@ -27,7 +27,7 @@ function tabUpdated(tabId, changeInfo, tab) {
         return;
     }
 
-    if (changeInfo.url || changeInfo.status === 'complete') {
+    if (changeInfo.status === 'complete') {
         //re-inject the script if tab was reloaded or URL changed
         startListening(tabId);
     }
