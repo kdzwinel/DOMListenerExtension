@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>DOMListener - DevTools panel page</title>
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/panel.css">
+</head>
+<body>
+<p class="status" title="Unable to contact content script. Try reloading the page.">Disconnected!</p>
+<nav>
+    <button class="button-primary record">Start</button>
+    <button class="clear">Clear</button>
+    <button class="top">Top</button>
+    <button class="reload">Reload</button>
+</nav>
+<article>
+    <table class="events u-full-width">
+        <thead>
+        <tr>
+            <th>
+                <div class="type-filters">
+                    <div class="checkbox nodes-added" title="nodes added">
+                        <input type="checkbox" id="nodes-added-filter" checked/>
+                        <label for="nodes-added-filter"></label>
+                    </div>
+                    <div class="checkbox nodes-removed" title="nodes removed">
+                        <input type="checkbox" id="nodes-removed-filter" checked/>
+                        <label for="nodes-removed-filter"></label>
+                    </div>
+                    <div class="checkbox attribute-changed" title="attribute changed">
+                        <input type="checkbox" id="attribute-changed-filter" checked/>
+                        <label for="attribute-changed-filter"></label>
+                    </div>
+                    <div class="checkbox text-changed" title="text changed">
+                        <input type="checkbox" id="text-changed-filter" checked/>
+                        <label for="text-changed-filter"></label>
+                    </div>
+                </div>
+                Event
+            </th>
+            <th>
+                <input type="text" placeholder="filter" class="target-filter"/>
+                Target
+            </th>
+            <th>Details</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</article>
+
+<script src="js/panel.js"></script>
+</body>
+</html>

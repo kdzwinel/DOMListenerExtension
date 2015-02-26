@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
     "name": "DOMListener",
-    "version": "0.13",
-    "description": "Logs all DOM mutation events to the DevTools console.",
+    "version": "0.2",
+    "description": "Monitor, browse and filter all DOM changes with ease.",
     "icons": {
         "128": "ico/logo_128.png",
         "48": "ico/logo_48.png"
@@ -12,10 +12,7 @@
         "<all_urls>"
     ],
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["js/background.js"]
     },
-    "browser_action": {
-        "default_icon": "ico/ear-off.png",
-        "default_title": "Listen for DOM events"
-    }
+    "devtools_page": "devtools.html"
 }
