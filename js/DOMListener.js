@@ -28,8 +28,8 @@
             var boxShadowOrg = node.style.boxShadow;
 
             var player = node.animate([
-                {boxShadow: '0 0 0 3px #33C3F0'},
-                {boxShadow: '0 0 0 0 #33C3F0'}
+                {boxShadow: '0 0 0 5px rgba(51, 195, 240, 1)'},
+                {boxShadow: '0 0 0 5px rgba(51, 195, 240, 0)'}
             ], 600);
 
             player.onfinish = function () {
