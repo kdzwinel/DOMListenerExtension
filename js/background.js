@@ -48,8 +48,6 @@ function handleContentScriptConnection(port) {
 
     contentScriptPorts[tabId] = port;
 
-    port.postMessage({tro: 'lololo'});
-
     var messageListener = function (message, sender, sendResponse) {
         console.log('content script', message, tabId);
 

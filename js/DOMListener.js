@@ -14,17 +14,9 @@
     bgPageConnection.onMessage.addListener(function (message, sender, sendResponse) {
         console.log('incoming message', message, sender);
 
-        if (message.type === 'highlight') {
-            var node = nodeRegistry[message.nodeId];
-
-            if (node && node.nodeName === '#text') {
-                highlightNode(node.parentNode);
-            } else {
-                highlightNode(node);
-            }
-        } else if(message.type === 'stop-listening') {
+        if (message.type === 'stop-listening') {
             window.domListenerExtension.stopListening();
-        } else if(message.type === 'start-listening') {
+        } else if (message.type === 'start-listening') {
             window.domListenerExtension.startListening();
         }
     });
@@ -33,7 +25,7 @@
         if (node && node.nodeName === '#text') {
             highlightNode(node.parentNode);
         } else if (node && node.style) {
-            var orgVal = node.style.boxShadow;
+            var boxShadowOrg = node.style.boxShadow;
 
             var player = node.animate([
                 {boxShadow: '0 0 0 3px #33C3F0'},
@@ -41,51 +33,56 @@
             ], 600);
 
             player.onfinish = function () {
-                node.style.boxShadow = orgVal;
+                node.style.boxShadow = boxShadowOrg;
             };
         }
     }
 
-    function nodeToSelector(node) {
+    function nodeToSelector(node, contextNode) {
         if (node.id) {
             return '#' + node.id;
         } else if (node.classList && node.classList.length) {
             return node.tagName + '.' + Array.prototype.join.call(node.classList, '.');
-        } else if (node.parentElement) {
-            var parentSelector = nodeToSelector(node.parentElement);
+        } else if (node.parentElement && node.parentElement !== contextNode) {
+            var parentSelector = nodeToSelector(node.parentElement, contextNode);
 
             if (node.nodeName === '#comment') {
                 return parentSelector + ' > (comment)';
             } else if (node.nodeName === '#text') {
-                return parentSelector;
+                return parentSelector + ' > (text)';
             } else {
-                return parentSelector + ' > ' + node.nodeName
+                return parentSelector + ' > ' + node.nodeName;
             }
         } else if (node.nodeName) {
-            return node.nodeName;
+            if (node.nodeName === '#comment') {
+                return '(comment)';
+            } else if (node.nodeName === '#text') {
+                return '(text)';
+            } else {
+                return node.nodeName;
+            }
         } else {
             return '(unknown)';
         }
     }
 
-    function nodesToObjects(nodes) {
-        return Array.prototype.map.call(nodes, nodeToObject);
+    function nodesToObjects(nodes, contextNode) {
+        return Array.prototype.map.call(nodes, function(node) {
+            return nodeToObject(node, contextNode);
+        });
     }
 
-    function nodeToObject(node) {
+    function nodeToObject(node, contextNode) {
         nodeRegistry.push(node);
         highlightNode(node);
 
         return {
-            selector: nodeToSelector(node),
+            selector: nodeToSelector(node, contextNode),
             nodeId: nodeRegistry.length - 1
         };
     }
 
     function logEvent(event) {
-        //#FBB117 color is named "Beer" and #6F4E37 is named "Coffee". Quite amazingly, they work together nicely.
-        console.debug('%cDOM change: %c' + event.type, 'color: #FBB117; font-weight: bold', 'color: #6F4E37', event);
-
         bgPageConnection.postMessage({
             type: 'event',
             event: event
@@ -114,13 +111,15 @@
                     logEvent({
                         type: 'nodes added',
                         target: nodeToObject(record.target),
-                        nodes: nodesToObjects(record.addedNodes)
+                        nodes: nodesToObjects(record.addedNodes, record.target)
                     });
-                } else if (record.removedNodes.length) {
+                }
+
+                if (record.removedNodes.length) {
                     logEvent({
                         type: 'nodes removed',
                         target: nodeToObject(record.target),
-                        nodes: nodesToObjects(record.removedNodes)
+                        nodes: nodesToObjects(record.removedNodes, record.target)
                     });
 
                     cleanUpNodeRegistry();
@@ -172,14 +171,23 @@
                     characterDataOldValue: true
                 });
                 this._listening = true;
-
-                window.console.debug('%cDOM Listener connected.', 'color: #FBB117; font-weight: bold');
             },
             stopListening: function () {
                 observer.disconnect();
                 this._listening = false;
+            },
+            getNode: function (nodeId) {
+                var node = nodeRegistry[nodeId];
 
-                window.console.debug('%cDOM Listener disconnected.', 'color: #FBB117; font-weight: bold');
+                if (node && node.nodeName === '#text') {
+                    return node.parentNode;
+                }
+
+                return node;
+            },
+            highlightNode: function (nodeId) {
+                var node = this.getNode(nodeId);
+                highlightNode(node);
             }
         };
     }

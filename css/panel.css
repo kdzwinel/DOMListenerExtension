@@ -42,6 +42,10 @@ nav > button {
     display: none;
 }
 
+.events {
+    margin-bottom: 50px;
+}
+
 .events thead th {
     vertical-align: bottom;
 }

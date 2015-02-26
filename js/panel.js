@@ -87,13 +87,18 @@ function formatValue(value) {
     }
 }
 
+function inspectNode(nodeId) {
+    chrome.devtools.inspectedWindow.eval(
+        'inspect(domListenerExtension.getNode(' + nodeId + '))',
+        {useContentScriptContext: true}
+    );
+}
 
 function highlightNode(nodeId) {
-    bgPageConnection.postMessage({
-        type: 'highlight',
-        tabId: chrome.devtools.inspectedWindow.tabId,
-        nodeId: nodeId
-    });
+    chrome.devtools.inspectedWindow.eval(
+        'domListenerExtension.highlightNode(' + nodeId + ')',
+        {useContentScriptContext: true}
+    );
 }
 
 function formatNode(node) {
@@ -114,7 +119,11 @@ tbody.addEventListener('click', function (e) {
     var target = e.target;
 
     if (target && target.classList.contains('node') && target.dataset.nodeid) {
-        highlightNode(target.dataset.nodeid);
+        if(e.shiftKey) {
+            inspectNode(target.dataset.nodeid);
+        } else {
+            highlightNode(target.dataset.nodeid);
+        }
     }
 });
 
