@@ -130,7 +130,7 @@
                     oldValue: record.oldValue
                 });
             } else {
-                console.error('unknown type of event', record);
+                console.error('DOM Listener Extension: unknown type of event', record);
             }
         }
     }

@@ -1,5 +1,4 @@
 var statusElem = document.querySelector('.status');
-var reloadBtn = document.querySelector('.reload');
 var clearBtn = document.querySelector('.clear');
 var topBtn = document.querySelector('.top');
 var recordBtn = document.querySelector('.record');
@@ -30,7 +29,7 @@ function toTheTop() {
         return;
     }
 
-    document.body.scrollTop -= (scrollPos > 10) ? (scrollPos / 3) : 10;
+    document.body.scrollTop -= (scrollPos > 10) ? (scrollPos / 4) : 10;
     requestAnimationFrame(toTheTop);
 }
 
@@ -139,10 +138,6 @@ recordBtn.addEventListener('click', function () {
     }
 });
 
-reloadBtn.addEventListener('click', function () {
-    location.reload(true);
-});
-
 clearBtn.addEventListener('click', clearList);
 
 targetFilter.addEventListener('keyup', updateTargetFilter);
@@ -161,6 +156,22 @@ tbody.addEventListener('click', function (e) {
     }
 });
 
+var scrollPos = 0;
+document.addEventListener('scroll', function () {
+    scrollPos = document.body.scrollTop;
+});
+
+function updateTopBtn() {
+    if (scrollPos > 0) {
+        topBtn.classList.remove('hidden');
+    } else {
+        topBtn.classList.add('hidden');
+    }
+    requestAnimationFrame(updateTopBtn);
+}
+updateTopBtn();
+
+
 for (var i = 0, l = typeFilters.length; i < l; i++) {
     typeFilters[i].addEventListener('change', updateTypeFilters);
 }
@@ -170,8 +181,6 @@ var bgPageConnection = chrome.runtime.connect({
 });
 
 bgPageConnection.onMessage.addListener(function (message) {
-    console.log('incoming message', message);
-
     if (message.type === 'connected') {
         statusElem.classList.add('connected');
 

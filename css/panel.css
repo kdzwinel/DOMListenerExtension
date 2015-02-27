@@ -29,11 +29,22 @@ nav > button {
     background: white;
 }
 
+.top {
+    opacity: 1;
+    transition: opacity 300ms;
+}
+
+.top.hidden {
+    pointer-events: none;
+    opacity: 0;
+}
+
 .status {
     position: fixed;
     top: 10px;
     right: 10px;
-    color: darkred;
+    color: rgba(139, 0, 0, 0.5);
+    font-size: small;
     z-index: 1;
     cursor: help;
 }
@@ -62,25 +73,29 @@ nav > button {
     margin-bottom: 9px;
 }
 
+.events td {
+    word-wrap: break-word;
+}
+
 .events td:first-child {
     border-left: solid transparent 5px;
     padding-left: 4px;
 }
 
 .events tr.nodes-added td:first-child {
-    border-left-color: #B7E3C0;
+    border-left-color: #8ADBF6;
 }
 
 .events tr.nodes-removed td:first-child {
-    border-left-color: #F39DD4;
+    border-left-color: #FFC68B;
 }
 
 .events tr.text-changed td:first-child {
-    border-left-color: #F8F087;
+    border-left-color: #FEEF8B;
 }
 
 .events tr.attribute-changed td:first-child {
-    border-left-color: #B8D0DD;
+    border-left-color: #B392F8;
 }
 
 .events th:nth-child(1), td:nth-child(1) {
@@ -165,17 +180,17 @@ Checkbox
 }
 
 .checkbox.nodes-added label {
-    background: #B7E3C0;
+    background: #8ADBF6;
 }
 
 .checkbox.nodes-removed label {
-    background: #F39DD4;
+    background: #FFC68B;
 }
 
 .checkbox.text-changed label {
-    background: #F8F087;
+    background: #FEEF8B;
 }
 
 .checkbox.attribute-changed label {
-    background: #B8D0DD;
+    background: #B392F8;
 }
