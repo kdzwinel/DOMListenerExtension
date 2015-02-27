@@ -1,18 +1,29 @@
 DOMListener
 ======================
 
-Chrome/Chromium extension that logs all DOM changes to the DevTools console.
+Chrome extension that allows you to monitor, browse and filter all DOM changes.
 
 ![Screenshot](https://github.com/kdzwinel/DOMListenerExtension/blob/master/ico/screenshot1.png?raw=true)
+
+Installation
+-----
+
+You can get this extension in the [Chrome Web Store](https://chrome.google.com/webstore/detail/domlistener/jlfdgnlpibogjanomigieemaembjeolj) or [download it from github](https://github.com/kdzwinel/DOMListenerExtension/archive/master.zip) and manually load as an 'Unpacked extension' via chrome extensions page.
 
 Usage
 -----
 
-You may install this extension from its google chrome webstore page
+Open Chrome DevTools and navigate to the "DOMListener" panel. From here you can:
 
-https://chrome.google.com/webstore/detail/domlistener/jlfdgnlpibogjanomigieemaembjeolj
+- start listening/recording DOM changes ("Record" button),
+- filter types of events using checkboxes in the top left corner,
+- filter affected nodes by providing a search query in the input field,
+- highlight affected nodes by clicking on their names and
+- inspect affected nodes by holding Shift and clicking on their names.
 
-or download it and manually load as an 'Unpacked extension' via chrome extensions page.
+How does it work?
+-----
+[MutationObserver](https://developer.mozilla.org/en/docs/Web/API/MutationObserver).
 
 
 Bugs and Features
@@ -25,15 +36,14 @@ https://github.com/kdzwinel/DOMListenerExtension/issues
 Thanks to
 ------
 
-**Sunil Agrawal** for inspiration
+**Sunil Agrawal** for [inspiration](http://stackoverflow.com/questions/18821336/a-browser-extension-to-dump-all-dom-method-calls)
 
 Author
 ------
 
 **Konrad Dzwinel**
 
-+ https://github.com/kdzwinel
-+ http://www.linkedin.com/pub/konrad-dzwinel/53/599/366/en
++ https://twitter.com/kdzwinel
 
 License
 -------

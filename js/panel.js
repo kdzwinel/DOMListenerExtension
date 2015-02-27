@@ -2,13 +2,14 @@ var statusElem = document.querySelector('.status');
 var clearBtn = document.querySelector('.clear');
 var recordBtn = document.querySelector('.record');
 var topBtn = document.querySelector('.top');
-
 var table = document.querySelector('.events');
+var intro = document.querySelector('.intro');
 
 var scrollHelper = new ScrollHelper(topBtn);
 var eventTable = new EventTable(table);
 
 var recording = false;
+
 recordBtn.addEventListener('click', function () {
     recording = !recording;
 
@@ -18,6 +19,17 @@ recordBtn.addEventListener('click', function () {
         ContentScriptProxy.startRecording();
     } else {
         ContentScriptProxy.stopRecording();
+    }
+
+    if(intro.style.display !== 'none') {
+        var player = intro.animate([
+            {opacity: 1},
+            {opacity: 0}
+        ], 300);
+
+        player.onfinish = function() {
+            intro.style.display = 'none';
+        };
     }
 });
 

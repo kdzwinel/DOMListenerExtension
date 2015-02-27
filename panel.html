@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>DOMListener - DevTools panel page</title>
 
     <link rel="stylesheet" href="css/normalize.css">
@@ -15,7 +17,7 @@
     <button class="clear">Clear</button>
     <button class="top hidden">Top</button>
 </nav>
-<article>
+<main>
     <table class="events u-full-width">
         <thead>
         <tr>
@@ -49,11 +51,26 @@
         </thead>
         <tbody></tbody>
     </table>
-</article>
+</main>
+<aside class="intro">
+    <p>Click <em>"Record"</em> button below to start listening for DOM changes.</p>
+
+    <div class="social-buttons">
+        <iframe
+            src="http://ghbtns.com/github-btn.html?user=kdzwinel&amp;repo=DOMListenerExtension&amp;type=watch&amp;count=true&amp;size=small"
+            style="background-color: transparent; border: none; overflow:hidden" width="90" height="20"></iframe>
+        <a href="https://twitter.com/share" class="twitter-share-button"
+           data-url="https://chrome.google.com/webstore/detail/domlistener/jlfdgnlpibogjanomigieemaembjeolj"
+           data-text="DOMListener Chrome Extension - monitor, browse and filter all DOM changes with ease."
+           data-count="horizontal">&nbsp;</a>
+    </div>
+</aside>
 
 <script src="js/ContentScriptProxy.js"></script>
 <script src="js/EventTable.js"></script>
 <script src="js/ScrollHelper.js"></script>
 <script src="js/panel.js"></script>
+
+<script src="https://platform.twitter.com/widgets.js"></script>
 </body>
 </html>

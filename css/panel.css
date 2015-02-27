@@ -14,6 +14,14 @@ body {
     padding: 10px;
 }
 
+.intro {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -215px;
+    margin-top: -35px;
+}
+
 nav {
     position: fixed;
     z-index: 1;

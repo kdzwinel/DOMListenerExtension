@@ -14,5 +14,6 @@
     "background": {
         "scripts": ["js/background.js"]
     },
-    "devtools_page": "devtools.html"
+    "devtools_page": "devtools.html",
+    "content_security_policy": "script-src 'self' https://platform.twitter.com; object-src 'self'"
 }
