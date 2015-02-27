@@ -71,15 +71,15 @@ nav > button {
     border-left-color: #B7E3C0;
 }
 
-.events tr.nodes-removed td:first-child  {
+.events tr.nodes-removed td:first-child {
     border-left-color: #F39DD4;
 }
 
-.events tr.text-changed td:first-child  {
+.events tr.text-changed td:first-child {
     border-left-color: #F8F087;
 }
 
-.events tr.attribute-changed td:first-child  {
+.events tr.attribute-changed td:first-child {
     border-left-color: #B8D0DD;
 }
 
@@ -89,6 +89,10 @@ nav > button {
 
 .events th:nth-child(3), td:nth-child(3) {
     width: 60%;
+}
+
+.events thead .counter {
+    color: rgba(34, 34, 34, 0.33);
 }
 
 .node:hover {

@@ -2,10 +2,12 @@ var statusElem = document.querySelector('.status');
 var reloadBtn = document.querySelector('.reload');
 var clearBtn = document.querySelector('.clear');
 var topBtn = document.querySelector('.top');
+var recordBtn = document.querySelector('.record');
 var thead = document.querySelector('.events thead');
 var tbody = document.querySelector('.events tbody');
 var typeFilters = document.querySelectorAll('.type-filters input');
 var targetFilter = document.querySelector('.target-filter');
+var eventCounter = document.querySelector('.events thead .counter');
 
 function injectContentScript() {
     // Send the tab ID to the background page
@@ -18,6 +20,7 @@ function injectContentScript() {
 
 function clearList() {
     tbody.innerHTML = '';
+    updateEventCounter();
 }
 
 function toTheTop() {
@@ -29,6 +32,10 @@ function toTheTop() {
 
     document.body.scrollTop -= (scrollPos > 10) ? (scrollPos / 3) : 10;
     requestAnimationFrame(toTheTop);
+}
+
+function updateEventCounter() {
+    eventCounter.innerText = '(' + tbody.children.length + ')';
 }
 
 function updateTypeFilters() {
@@ -101,9 +108,36 @@ function highlightNode(nodeId) {
     );
 }
 
+function startRecording() {
+    chrome.devtools.inspectedWindow.eval(
+        'domListenerExtension.startListening()',
+        {useContentScriptContext: true}
+    );
+}
+
+function stopRecording() {
+    chrome.devtools.inspectedWindow.eval(
+        'domListenerExtension.stopListening()',
+        {useContentScriptContext: true}
+    );
+}
+
 function formatNode(node) {
     return '<span class="node" data-nodeid="' + node.nodeId + '">' + node.selector + '</span>';
 }
+
+var recording = false;
+recordBtn.addEventListener('click', function () {
+    recording = !recording;
+
+    recordBtn.innerText = recording ? 'Stop' : 'Record';
+
+    if (recording) {
+        startRecording();
+    } else {
+        stopRecording();
+    }
+});
 
 reloadBtn.addEventListener('click', function () {
     location.reload(true);
@@ -119,7 +153,7 @@ tbody.addEventListener('click', function (e) {
     var target = e.target;
 
     if (target && target.classList.contains('node') && target.dataset.nodeid) {
-        if(e.shiftKey) {
+        if (e.shiftKey) {
             inspectNode(target.dataset.nodeid);
         } else {
             highlightNode(target.dataset.nodeid);
@@ -140,9 +174,15 @@ bgPageConnection.onMessage.addListener(function (message) {
 
     if (message.type === 'connected') {
         statusElem.classList.add('connected');
+
         clearList();
+
+        if (recording) {
+            startRecording();
+        }
     } else if (message.type === 'disconnected') {
         statusElem.classList.remove('connected');
+
         injectContentScript();
     } else if (message.type === 'event') {
         var event = message.event;
@@ -193,6 +233,8 @@ bgPageConnection.onMessage.addListener(function (message) {
             {opacity: 0},
             {opacity: 1}
         ], 300);
+
+        updateEventCounter();
     }
 });
 

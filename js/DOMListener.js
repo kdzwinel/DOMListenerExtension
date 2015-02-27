@@ -11,16 +11,6 @@
         type: 'connected'
     });
 
-    bgPageConnection.onMessage.addListener(function (message, sender, sendResponse) {
-        console.log('incoming message', message, sender);
-
-        if (message.type === 'stop-listening') {
-            window.domListenerExtension.stopListening();
-        } else if (message.type === 'start-listening') {
-            window.domListenerExtension.startListening();
-        }
-    });
-
     function highlightNode(node) {
         if (node && node.nodeName === '#text') {
             highlightNode(node.parentNode);
@@ -67,7 +57,7 @@
     }
 
     function nodesToObjects(nodes, contextNode) {
-        return Array.prototype.map.call(nodes, function(node) {
+        return Array.prototype.map.call(nodes, function (node) {
             return nodeToObject(node, contextNode);
         });
     }
@@ -190,9 +180,5 @@
                 highlightNode(node);
             }
         };
-    }
-
-    if (!window.domListenerExtension.isListening()) {
-        window.domListenerExtension.startListening();
     }
 })();
