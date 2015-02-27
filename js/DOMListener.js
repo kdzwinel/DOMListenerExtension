@@ -63,12 +63,18 @@
     }
 
     function nodeToObject(node, contextNode) {
-        nodeRegistry.push(node);
+        var nodeId = nodeRegistry.indexOf(node);
+
+        if(nodeId === -1) {
+            nodeRegistry.push(node);
+            nodeId = nodeRegistry.length - 1;
+        }
+
         highlightNode(node);
 
         return {
             selector: nodeToSelector(node, contextNode),
-            nodeId: nodeRegistry.length - 1
+            nodeId: nodeId
         };
     }
 
@@ -146,10 +152,6 @@
         var observer = new MutationObserver(onMutation);
 
         window.domListenerExtension = {
-            _listening: false,
-            isListening: function () {
-                return this._listening;
-            },
             startListening: function () {
                 observer.disconnect();
                 observer.observe(document, {
@@ -160,20 +162,12 @@
                     characterData: true,
                     characterDataOldValue: true
                 });
-                this._listening = true;
             },
             stopListening: function () {
                 observer.disconnect();
-                this._listening = false;
             },
             getNode: function (nodeId) {
-                var node = nodeRegistry[nodeId];
-
-                if (node && node.nodeName === '#text') {
-                    return node.parentNode;
-                }
-
-                return node;
+                return nodeRegistry[nodeId];
             },
             highlightNode: function (nodeId) {
                 var node = this.getNode(nodeId);
