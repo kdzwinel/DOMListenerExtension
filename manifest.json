@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "DOMListener",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Monitor, browse and filter all DOM changes with ease.",
     "icons": {
         "128": "ico/logo_128.png",

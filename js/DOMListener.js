@@ -1,6 +1,23 @@
 (function () {
     "use strict";
 
+    var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+    if (typeof MutationObserver !== 'function') {
+        console.error('DOM Listener Extension: MutationObserver is not available in your browser.');
+        return;
+    }
+
+    var observer = new MutationObserver(onMutation);
+    var observerSettings = {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeOldValue: true,
+        characterData: true,
+        characterDataOldValue: true
+    };
+
     var nodeRegistry = [];
 
     var bgPageConnection = chrome.runtime.connect({
@@ -85,12 +102,24 @@
         });
     }
 
+    function isAttached(node) {
+        if(node === document) {
+            return true;
+        } else if(node.parentNode) {
+            return isAttached(node.parentNode);
+        } else if(node.host) {
+            return isAttached(node.host);
+        }
+
+        return false;
+    }
+
     function cleanUpNodeRegistry() {
         //get rid of detached nodes
         for (var i = 0, l = nodeRegistry.length; i < l; i++) {
             var node = nodeRegistry[i];
 
-            if (node && !document.contains(node)) {
+            if (node && !isAttached(node)) {
                 nodeRegistry[i] = null;
             }
         }
@@ -112,6 +141,10 @@
 
                     Array.prototype.forEach.call(record.addedNodes, function (node) {
                         highlightNode(node, {r: 138, g:219, b: 246});
+
+                        findShadowRoots(node).forEach(function(shadowRoot) {
+                            observer.observe(shadowRoot, observerSettings);
+                        });
                     });
                 }
 
@@ -150,26 +183,35 @@
         }
     }
 
-    if (!window.domListenerExtension) {
-        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+    function findShadowRoots(node, list) {
+        list = list || [];
 
-        if (typeof MutationObserver !== 'function') {
-            console.error('DOM Listener Extension: MutationObserver is not available in your browser.');
-            return;
+        if(node.shadowRoot) {
+            list.push(node.shadowRoot);
         }
 
-        var observer = new MutationObserver(onMutation);
+        if(node && node.querySelectorAll) {
+            Array.prototype.forEach.call(node.querySelectorAll('*'), function(child) {
+                if(child.tagName && child.tagName.indexOf('-') > -1 && child.shadowRoot) {
+                    findShadowRoots(child, list)
+                }
+            });
+        }
 
+        return list;
+    }
+
+    if (!window.domListenerExtension) {
         window.domListenerExtension = {
             startListening: function () {
                 observer.disconnect();
-                observer.observe(document, {
-                    subtree: true,
-                    childList: true,
-                    attributes: true,
-                    attributeOldValue: true,
-                    characterData: true,
-                    characterDataOldValue: true
+
+                //observe the main document
+                observer.observe(document, observerSettings);
+
+                //observe all shadow roots
+                findShadowRoots(document).forEach(function (shadowRoot) {
+                    observer.observe(shadowRoot, observerSettings);
                 });
             },
             stopListening: function () {
