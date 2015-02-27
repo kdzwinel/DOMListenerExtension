@@ -1,7 +1,7 @@
 DOMListener
 ======================
 
-Chrome extension that allows you to monitor, browse and filter all DOM changes.
+DOMListener is a simple tool that provides convenient interface for observing DOM changes (node removal and addition, attribute and text modifications). Events can be filtered with ease, affected nodes can be highlighted with a single click.
 
 ![Screenshot](https://github.com/kdzwinel/DOMListenerExtension/blob/master/ico/screenshot1.png?raw=true)
 
