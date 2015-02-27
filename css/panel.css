@@ -91,19 +91,19 @@ nav > button {
 }
 
 .events tr.nodes-added td:first-child {
-    border-left-color: #8ADBF6;
+    border-left-color: rgb(138,219,246);
 }
 
 .events tr.nodes-removed td:first-child {
-    border-left-color: #FFC68B;
+    border-left-color: rgb(255,198,139);
 }
 
 .events tr.text-changed td:first-child {
-    border-left-color: #FEEF8B;
+    border-left-color: rgb(254,239,139);
 }
 
 .events tr.attribute-changed td:first-child {
-    border-left-color: #B392F8;
+    border-left-color: rgb(179,146,248);
 }
 
 .events th:nth-child(1), td:nth-child(1) {
@@ -188,17 +188,17 @@ Checkbox
 }
 
 .checkbox.nodes-added label {
-    background: #8ADBF6;
+    background: rgb(138,219,246);
 }
 
 .checkbox.nodes-removed label {
-    background: #FFC68B;
+    background: rgb(255,198,139);
 }
 
 .checkbox.text-changed label {
-    background: #FEEF8B;
+    background: rgb(254,239,139);
 }
 
 .checkbox.attribute-changed label {
-    background: #B392F8;
+    background: rgb(179,146,248);
 }

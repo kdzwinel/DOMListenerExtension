@@ -1,72 +1,76 @@
-chrome.runtime.onConnect.addListener(function (port) {
-    if (port.name === 'devtools-page') {
-        handleDevToolsConnection(port);
-    } else if (port.name === 'content-script') {
-        handleContentScriptConnection(port);
-    }
-});
+(function () {
+    "use strict";
 
-var devToolsPorts = {};
-var contentScriptPorts = {};
+    chrome.runtime.onConnect.addListener(function (port) {
+        if (port.name === 'devtools-page') {
+            handleDevToolsConnection(port);
+        } else if (port.name === 'content-script') {
+            handleContentScriptConnection(port);
+        }
+    });
 
-function handleDevToolsConnection(port) {
-    var tabId;
+    var devToolsPorts = {};
+    var contentScriptPorts = {};
 
-    var messageListener = function (message, sender, sendResponse) {
-        console.log('devtools panel', message, sender);
+    function handleDevToolsConnection(port) {
+        var tabId;
 
-        if (message.type === 'inject') {
-            tabId = message.tabId;
-            devToolsPorts[tabId] = port;
+        var messageListener = function (message, sender, sendResponse) {
+            console.log('devtools panel', message, sender);
 
-            chrome.tabs.executeScript(message.tabId, {
-                file: message.scriptToInject
-            }, function () {
-                if (chrome.runtime.lastError) {
-                    console.log('Error injecting script', chrome.runtime.lastError);
+            if (message.type === 'inject') {
+                tabId = message.tabId;
+                devToolsPorts[tabId] = port;
+
+                chrome.tabs.executeScript(message.tabId, {
+                    file: message.scriptToInject
+                }, function () {
+                    if (chrome.runtime.lastError) {
+                        console.log('Error injecting script', chrome.runtime.lastError);
+                    }
+                });
+            } else {
+                //pass message from DevTools panel to a content script
+                if (contentScriptPorts[tabId]) {
+                    contentScriptPorts[tabId].postMessage(message);
                 }
-            });
-        } else {
-            //pass message from DevTools panel to a content script
-            if (contentScriptPorts[tabId]) {
-                contentScriptPorts[tabId].postMessage(message);
             }
-        }
-    };
+        };
 
-    port.onMessage.addListener(messageListener);
+        port.onMessage.addListener(messageListener);
 
-    port.onDisconnect.addListener(function () {
-        devToolsPorts[tabId] = undefined;
-        contentScriptPorts[tabId] = undefined;
-        port.onMessage.removeListener(messageListener);
-    });
-}
+        port.onDisconnect.addListener(function () {
+            devToolsPorts[tabId] = undefined;
+            contentScriptPorts[tabId] = undefined;
+            port.onMessage.removeListener(messageListener);
+        });
+    }
 
-function handleContentScriptConnection(port) {
-    var tabId = port.sender.tab.id;
+    function handleContentScriptConnection(port) {
+        var tabId = port.sender.tab.id;
 
-    contentScriptPorts[tabId] = port;
+        contentScriptPorts[tabId] = port;
 
-    var messageListener = function (message, sender, sendResponse) {
-        console.log('content script', message, tabId);
+        var messageListener = function (message, sender, sendResponse) {
+            console.log('content script', message, tabId);
 
-        //pass message from content script to the appropriate DevTools panel
-        if (devToolsPorts[tabId]) {
-            devToolsPorts[tabId].postMessage(message);
-        }
-    };
+            //pass message from content script to the appropriate DevTools panel
+            if (devToolsPorts[tabId]) {
+                devToolsPorts[tabId].postMessage(message);
+            }
+        };
 
-    port.onMessage.addListener(messageListener);
+        port.onMessage.addListener(messageListener);
 
-    port.onDisconnect.addListener(function () {
-        port.onMessage.removeListener(messageListener);
+        port.onDisconnect.addListener(function () {
+            port.onMessage.removeListener(messageListener);
 
-        //let devtools panel know that content script has disconnected
-        if (devToolsPorts[tabId]) {
-            devToolsPorts[tabId].postMessage({
-                type: 'disconnected'
-            });
-        }
-    });
-}
+            //let devtools panel know that content script has disconnected
+            if (devToolsPorts[tabId]) {
+                devToolsPorts[tabId].postMessage({
+                    type: 'disconnected'
+                });
+            }
+        });
+    }
+})();

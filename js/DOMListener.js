@@ -11,15 +11,17 @@
         type: 'connected'
     });
 
-    function highlightNode(node) {
+    function highlightNode(node, color) {
+        color = color || {r:51, g:195, b:240};
+
         if (node && node.nodeName === '#text') {
-            highlightNode(node.parentNode);
+            highlightNode(node.parentNode, color);
         } else if (node && node.style) {
             var boxShadowOrg = node.style.boxShadow;
 
             var player = node.animate([
-                {boxShadow: '0 0 0 5px rgba(51, 195, 240, 1)'},
-                {boxShadow: '0 0 0 5px rgba(51, 195, 240, 0)'}
+                {boxShadow: '0 0 0 5px rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', 1)'},
+                {boxShadow: '0 0 0 5px rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', 0)'}
             ], 600);
 
             player.onfinish = function () {
@@ -70,8 +72,6 @@
             nodeId = nodeRegistry.length - 1;
         }
 
-        highlightNode(node);
-
         return {
             selector: nodeToSelector(node, contextNode),
             nodeId: nodeId
@@ -109,6 +109,10 @@
                         target: nodeToObject(record.target),
                         nodes: nodesToObjects(record.addedNodes, record.target)
                     });
+
+                    Array.prototype.forEach.call(record.addedNodes, function (node) {
+                        highlightNode(node, {r: 138, g:219, b: 246});
+                    });
                 }
 
                 if (record.removedNodes.length) {
@@ -119,6 +123,7 @@
                     });
 
                     cleanUpNodeRegistry();
+                    highlightNode(record.target, {r: 255, g:198, b: 139});
                 }
             } else if (record.type === 'attributes') {
                 logEvent({
@@ -128,6 +133,8 @@
                     oldValue: record.oldValue,
                     newValue: record.target.getAttribute(record.attributeName)
                 });
+
+                highlightNode(record.target, {r: 179, g:146, b: 248});
             } else if (record.type === 'characterData') {
                 logEvent({
                     type: 'text changed',
@@ -135,6 +142,8 @@
                     newValue: record.target.data,
                     oldValue: record.oldValue
                 });
+
+                highlightNode(record.target, {r: 254, g:239, b: 139});
             } else {
                 console.error('DOM Listener Extension: unknown type of event', record);
             }
