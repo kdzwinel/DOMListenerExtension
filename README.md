@@ -3,7 +3,7 @@ DOMListener
 
 DOMListener is a simple tool that provides convenient interface for observing DOM changes (node removal and addition, attribute and text modifications). Events can be filtered with ease, affected nodes can be highlighted with a single click.
 
-![Screenshot](https://github.com/kdzwinel/DOMListenerExtension/blob/master/ico/screenshot1.png?raw=true)
+![Screenshot](https://github.com/kdzwinel/DOMListenerExtension/blob/master/ico/screenshot1.jpg?raw=true)
 
 Installation
 -----
