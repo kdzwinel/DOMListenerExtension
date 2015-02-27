@@ -17,9 +17,9 @@ Open Chrome DevTools and navigate to the "DOMListener" panel. From here you can:
 
 - start listening/recording DOM changes ("Record" button),
 - filter types of events using checkboxes in the top left corner,
-- filter affected nodes by providing a search query in the input field,
-- highlight affected nodes by clicking on their names and
-- inspect affected nodes by holding Shift and clicking on their names.
+- filter nodes by providing a search query in the input field,
+- highlight nodes by clicking on their names and
+- inspect nodes by holding Shift and clicking on their names.
 
 How does it work?
 -----
