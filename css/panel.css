@@ -106,12 +106,22 @@ nav > button {
     border-left-color: rgb(179,146,248);
 }
 
-.events th:nth-child(1), td:nth-child(1) {
+.events th:nth-child(1), .events td:nth-child(1) {
     min-width: 155px;
 }
 
-.events th:nth-child(3), td:nth-child(3) {
+.events th:nth-child(3), .events td:nth-child(3) {
     width: 60%;
+}
+
+.events td:nth-child(3) > div {
+    max-height: 85px;
+    overflow: scroll;
+}
+
+.events td:nth-child(3) hr {
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 .events thead .counter {

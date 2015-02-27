@@ -15,6 +15,32 @@
         }
     }
 
+    function formatEventDetails(event) {
+        var details = "";
+        switch (event.type) {
+            case "nodes added":
+                details = event.nodes.length + ' node(s) added: ' +
+                '<em>' + (event.nodes.map(formatNode)).join('</em>, <em>') + '</em>';
+                break;
+            case "nodes removed":
+                details = event.nodes.length + ' node(s) removed: ' +
+                '<em>' + (event.nodes.map(formatNode)).join('</em>, <em>') + '</em>';
+                break;
+            case "attribute changed":
+                details = '<em>"' + event.attribute + '"</em> changed ' +
+                'from <em>' + formatValue(event.oldValue) + '</em> ' +
+                'to <em>' + formatValue(event.newValue) + '</em>';
+                break;
+            case "text changed":
+                details = 'text changed ' +
+                'from <em>' + formatValue(event.oldValue) + '</em> ' +
+                'to <em>' + formatValue(event.newValue) + '</em>';
+                break;
+        }
+
+        return details;
+    }
+
     function EventTable(table) {
         this._tableHead = table.tHead;
         this._tableBody = table.tBodies[0];
@@ -98,10 +124,33 @@
     };
 
     EventTable.prototype.addEvent = function (event) {
-        var tr = document.createElement('tr');
-        var tdTarget = document.createElement('td');
-        var tdAction = document.createElement('td');
-        var tdDetails = document.createElement('td');
+        var tr = (this._tableBody).firstChild;
+        var tdAction, tdDetails, tdTarget;
+
+        //check if events should be grouped together
+        if(tr && parseInt(tr.dataset.targetNodeId, 10) === event.target.nodeId && tr.dataset.eventType === event.type) {
+            tdAction = tr.querySelector('td:nth-child(1)');
+            tdDetails = tr.querySelector('td:nth-child(3)');
+
+            tr.dataset.count = parseInt(tr.dataset.count || "1", 10) + 1;
+
+            tdAction.innerText = tr.dataset.count + ' x ' + event.type;
+
+            tdDetails.querySelector('div').innerHTML += '<hr/>' + formatEventDetails(event);
+
+            this._count++;
+            return;
+        }
+
+        tr = document.createElement('tr');
+        tdAction = document.createElement('td');
+        tdTarget = document.createElement('td');
+        tdDetails = document.createElement('td');
+
+        tr.dataset.targetNodeId = event.target.nodeId;
+        tr.dataset.eventType = event.type;
+
+        tr.classList.add(event.type.replace(' ', '-'));
 
         tr.appendChild(tdAction);
         tr.appendChild(tdTarget);
@@ -116,40 +165,10 @@
 
         tdAction.innerText = event.type;
 
-        var details = "";
-        switch (event.type) {
-            case "nodes added":
-                details = event.nodes.length + ' node(s) added: ' +
-                '<em>' + (event.nodes.map(formatNode)).join('</em>, <em>') + '</em>';
-
-                tr.classList.add('nodes-added');
-                break;
-            case "nodes removed":
-                details = event.nodes.length + ' node(s) removed: ' +
-                '<em>' + (event.nodes.map(formatNode)).join('</em>, <em>') + '</em>';
-
-                tr.classList.add('nodes-removed');
-                break;
-            case "attribute changed":
-                details = '<em>"' + event.attribute + '"</em> changed ' +
-                'from <em>' + formatValue(event.oldValue) + '</em> ' +
-                'to <em>' + formatValue(event.newValue) + '</em>';
-
-                tr.classList.add('attribute-changed');
-                break;
-            case "text changed":
-                details = 'text changed ' +
-                'from <em>' + formatValue(event.oldValue) + '</em> ' +
-                'to <em>' + formatValue(event.newValue) + '</em>';
-
-                tr.classList.add('text-changed');
-                break;
-        }
-
-        tdDetails.innerHTML = details;
+        tdDetails.innerHTML = '<div>' + formatEventDetails(event) + '</div>';
 
         //insert at the top/beginning
-        this._tableBody.insertBefore(tr, this._tableBody.firstChild);
+        (this._tableBody).insertBefore(tr, this._tableBody.firstChild);
 
         tr.animate([
             {opacity: 0},
