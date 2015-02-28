@@ -201,7 +201,7 @@
         if (node && node.querySelectorAll) {
             Array.prototype.forEach.call(node.querySelectorAll('*'), function (child) {
                 if (child.tagName && child.tagName.indexOf('-') > -1 && child.shadowRoot) {
-                    findShadowRoots(child, list)
+                    findShadowRoots(child, list);
                 }
             });
         }
