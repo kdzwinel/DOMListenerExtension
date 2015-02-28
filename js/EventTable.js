@@ -27,9 +27,17 @@
                 '<em>' + (event.nodes.map(formatNode)).join('</em>, <em>') + '</em>';
                 break;
             case "attribute changed":
-                details = '<em>"' + event.attribute + '"</em> changed ' +
-                'from <em>' + formatValue(event.oldValue) + '</em> ' +
-                'to <em>' + formatValue(event.newValue) + '</em>';
+                details = '<em>"' + event.attribute + '"</em> ';
+
+                if(event.oldValue === null && event.newValue === "") {
+                    details += ' was added';
+                } else if(event.newValue === null && event.oldValue === "") {
+                    details += ' was removed';
+                } else {
+                    details += 'changed from <em>' + formatValue(event.oldValue) + '</em> ' +
+                    'to <em>' + formatValue(event.newValue) + '</em>';
+                }
+
                 break;
             case "text changed":
                 details = 'text changed ' +
