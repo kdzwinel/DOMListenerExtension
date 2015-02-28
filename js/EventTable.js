@@ -29,9 +29,9 @@
             case "attribute changed":
                 details = '<em>"' + event.attribute + '"</em> ';
 
-                if(event.oldValue === null && event.newValue === "") {
+                if (event.oldValue === null && event.newValue === "") {
                     details += ' was added';
-                } else if(event.newValue === null && event.oldValue === "") {
+                } else if (event.newValue === null && event.oldValue === "") {
                     details += ' was removed';
                 } else {
                     details += 'changed from <em>' + formatValue(event.oldValue) + '</em> ' +
@@ -136,7 +136,7 @@
         var tdAction, tdDetails, tdTarget;
 
         //check if events should be grouped together
-        if(tr && parseInt(tr.dataset.targetNodeId, 10) === event.target.nodeId && tr.dataset.eventType === event.type) {
+        if (tr && parseInt(tr.dataset.targetNodeId, 10) === event.target.nodeId && tr.dataset.eventType === event.type) {
             tdAction = tr.querySelector('td:nth-child(1)');
             tdDetails = tr.querySelector('td:nth-child(3)');
 
