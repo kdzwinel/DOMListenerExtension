@@ -44,7 +44,7 @@
         scrollHelper.scrollToTheTop();
     });
 
-// clicking on a node
+    // clicking on a node
     table.addEventListener('click', function (e) {
         var target = e.target;
 

@@ -47,6 +47,14 @@
         }
     }
 
+    function scrollIntoView(node) {
+        if (node && node.nodeName === '#text') {
+            scrollIntoView(node.parentNode);
+        } else if(node.scrollIntoViewIfNeeded) {
+            node.scrollIntoViewIfNeeded();
+        }
+    }
+
     function nodeToSelector(node, contextNode) {
         if (node.id) {
             return '#' + node.id;
@@ -222,6 +230,8 @@
             },
             highlightNode: function (nodeId) {
                 var node = this.getNode(nodeId);
+
+                scrollIntoView(node);
                 highlightNode(node);
             }
         };
