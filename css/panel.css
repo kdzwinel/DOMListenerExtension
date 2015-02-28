@@ -63,6 +63,7 @@ nav > button {
 
 .events {
     margin-bottom: 50px;
+    table-layout: fixed;
 }
 
 .events thead th {
