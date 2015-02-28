@@ -74,7 +74,7 @@
         name: "devtools-page"
     });
 
-    bgPageConnection.onMessage.addListener(function (message) {
+    bgPageConnection.onMessage.addListener(function handleMessage(message) {
         if (message.type === 'connected') {
             statusElem.classList.add('connected');
 
