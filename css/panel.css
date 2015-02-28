@@ -115,7 +115,7 @@ nav > button {
     width: 60%;
 }
 
-.events td:nth-child(3) > div {
+.events td > div {
     max-height: 85px;
     overflow: scroll;
 }

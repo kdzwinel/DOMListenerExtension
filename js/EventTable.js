@@ -160,20 +160,19 @@
 
         tr.classList.add(event.type.replace(' ', '-'));
 
+        tdAction.innerText = event.type;
+        tdTarget.innerHTML = '<div>' + formatNode(event.target) + '</div>';
+        tdDetails.innerHTML = '<div>' + formatEventDetails(event) + '</div>';
+
         tr.appendChild(tdAction);
         tr.appendChild(tdTarget);
         tr.appendChild(tdDetails);
 
-        tdTarget.innerHTML = formatNode(event.target);
-
+        //check if it matches current query
         var query = ((this._targetFilter).value).trim();
         if (!query || tdTarget.innerText.indexOf(query) > -1) {
             tr.classList.add('target-match');
         }
-
-        tdAction.innerText = event.type;
-
-        tdDetails.innerHTML = '<div>' + formatEventDetails(event) + '</div>';
 
         //insert at the top/beginning
         (this._tableBody).insertBefore(tr, this._tableBody.firstChild);
