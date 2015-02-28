@@ -8,6 +8,92 @@
         return;
     }
 
+    function Higlighter() {
+        var canvas = document.createElement('canvas');
+        canvas.setAttribute('id', 'domListenerExtensionCanvas');
+
+        canvas.style.position = 'fixed';
+        canvas.style.left = '0';
+        canvas.style.top = '0';
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.zIndex = '100000';
+        canvas.style.pointerEvents = 'none';
+
+        document.body.appendChild(canvas);
+
+        window.addEventListener('resize', function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        this._canvas = canvas;
+        this._ctx = canvas.getContext('2d');
+        this._highlights = [];
+
+        requestAnimationFrame(this._animate.bind(this));
+    }
+
+    Higlighter.prototype._animate = function () {
+        var canvas = this._canvas;
+        var context = this._ctx;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        this._highlights = (this._highlights).filter(function (item) {
+            return (item.time > 0);
+        });
+
+        this._highlights.forEach(function (item) {
+            if(item.left > 0 && item.top > 0 && item.left < canvas.width && item.top < canvas.height) {
+                context.fillStyle = 'rgba(' + item.color.r + ', ' + item.color.g + ', ' + item.color.b + ',' + (item.time/50) + ')';
+                context.fillRect(item.left, item.top, item.width, item.height);
+            }
+
+            item.time--;
+        });
+
+        if(this._highlights.length) {
+            requestAnimationFrame(this._animate.bind(this));
+        }
+    };
+
+    Higlighter.prototype.highlightNode = function(node, color) {
+        for(var i= 0, l=this._highlights.length; i<l; i++) {
+            if((this._highlights[i]).id === node) {
+                (this._highlights[i]).time = 30;
+                return;
+            }
+        }
+
+        color = color || {r: 51, g: 195, b: 240};
+
+        if (node && node.nodeName === '#text') {
+            this.highlightNode(node.parentNode, color);
+        } else if (node && node.getBoundingClientRect) {
+            var bounding = node.getBoundingClientRect();
+            this.highlight(node, bounding.left, bounding.top, bounding.width, bounding.height, color);
+        }
+    };
+
+    Higlighter.prototype.highlight = function (id, left, top, width, height, color) {
+        if(this._highlights.length === 0) {
+            requestAnimationFrame(this._animate.bind(this));
+        }
+
+        (this._highlights).push({
+            id: id,
+            left: left,
+            top: top,
+            width: width,
+            height: height,
+            color: color,
+            time: 30
+        });
+    };
+
+    var highlighter = new Higlighter();
+
     var observer = new MutationObserver(onMutation);
     var observerSettings = {
         subtree: true,
@@ -27,25 +113,6 @@
     bgPageConnection.postMessage({
         type: 'connected'
     });
-
-    function highlightNode(node, color) {
-        color = color || {r:51, g:195, b:240};
-
-        if (node && node.nodeName === '#text') {
-            highlightNode(node.parentNode, color);
-        } else if (node && node.style) {
-            var boxShadowOrg = node.style.boxShadow;
-
-            var player = node.animate([
-                {boxShadow: '0 0 0 5px rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', 1)'},
-                {boxShadow: '0 0 0 5px rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', 0)'}
-            ], 600);
-
-            player.onfinish = function () {
-                node.style.boxShadow = boxShadowOrg;
-            };
-        }
-    }
 
     function nodeToSelector(node, contextNode) {
         if (node.id) {
@@ -84,7 +151,7 @@
     function nodeToObject(node, contextNode) {
         var nodeId = nodeRegistry.indexOf(node);
 
-        if(nodeId === -1) {
+        if (nodeId === -1) {
             nodeRegistry.push(node);
             nodeId = nodeRegistry.length - 1;
         }
@@ -103,11 +170,11 @@
     }
 
     function isAttached(node) {
-        if(node === document) {
+        if (node === document || document.contains(node)) {
             return true;
-        } else if(node.parentNode) {
+        } else if (node.parentNode) {
             return isAttached(node.parentNode);
-        } else if(node.host) {
+        } else if (node.host) {
             return isAttached(node.host);
         }
 
@@ -140,9 +207,9 @@
                     });
 
                     Array.prototype.forEach.call(record.addedNodes, function (node) {
-                        highlightNode(node, {r: 138, g:219, b: 246});
+                        highlighter.highlightNode(node, {r: 138, g: 219, b: 246});
 
-                        findShadowRoots(node).forEach(function(shadowRoot) {
+                        findShadowRoots(node).forEach(function (shadowRoot) {
                             observer.observe(shadowRoot, observerSettings);
                         });
                     });
@@ -156,7 +223,7 @@
                     });
 
                     cleanUpNodeRegistry();
-                    highlightNode(record.target, {r: 255, g:198, b: 139});
+                    highlighter.highlightNode(record.target, {r: 255, g: 198, b: 139});
                 }
             } else if (record.type === 'attributes') {
                 logEvent({
@@ -167,7 +234,7 @@
                     newValue: record.target.getAttribute(record.attributeName)
                 });
 
-                highlightNode(record.target, {r: 179, g:146, b: 248});
+                highlighter.highlightNode(record.target, {r: 179, g: 146, b: 248});
             } else if (record.type === 'characterData') {
                 logEvent({
                     type: 'text changed',
@@ -176,7 +243,7 @@
                     oldValue: record.oldValue
                 });
 
-                highlightNode(record.target, {r: 254, g:239, b: 139});
+                highlighter.highlightNode(record.target, {r: 254, g: 239, b: 139});
             } else {
                 console.error('DOM Listener Extension: unknown type of event', record);
             }
@@ -186,13 +253,13 @@
     function findShadowRoots(node, list) {
         list = list || [];
 
-        if(node.shadowRoot) {
+        if (node.shadowRoot) {
             list.push(node.shadowRoot);
         }
 
-        if(node && node.querySelectorAll) {
-            Array.prototype.forEach.call(node.querySelectorAll('*'), function(child) {
-                if(child.tagName && child.tagName.indexOf('-') > -1 && child.shadowRoot) {
+        if (node && node.querySelectorAll) {
+            Array.prototype.forEach.call(node.querySelectorAll('*'), function (child) {
+                if (child.tagName && child.tagName.indexOf('-') > -1 && child.shadowRoot) {
                     findShadowRoots(child, list)
                 }
             });
@@ -222,7 +289,7 @@
             },
             highlightNode: function (nodeId) {
                 var node = this.getNode(nodeId);
-                highlightNode(node);
+                highlighter.highlightNode(node);
             }
         };
     }
