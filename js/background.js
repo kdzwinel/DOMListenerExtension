@@ -23,7 +23,8 @@
                 devToolsPorts[tabId] = port;
 
                 chrome.tabs.executeScript(message.tabId, {
-                    file: message.scriptToInject
+                    file: message.scriptToInject,
+                    runAt: "document_start"
                 }, function () {
                     if (chrome.runtime.lastError) {
                         console.log('Error injecting script', chrome.runtime.lastError);
