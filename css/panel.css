@@ -117,7 +117,7 @@ nav > button {
 
 .events td > div {
     max-height: 85px;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .events td:nth-child(3) hr {
