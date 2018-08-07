@@ -6,6 +6,7 @@ module.exports = function (grunt) {
     jshint: {
       files: ['Gruntfile.js', 'js/**/*.js'],
       options: {
+        esversion: 6,
         evil: true,
         camelcase: true,
         curly: true,
@@ -27,15 +28,6 @@ module.exports = function (grunt) {
         'fallback-colors': false
       }
     },
-    validation: {
-      options: {
-        reset: true,
-        reportpath: false
-      },
-      files: {
-        src: ['*.html']
-      }
-    },
     zip: {
       'domlistener-<%= pkg.version %>.zip': ['css/**/*', 'ico/logo_*.png', 'js/**/*', 'other/**/*', '*.html', 'manifest.json']
     }
@@ -43,9 +35,8 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-csslint');
-  grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-zip');
 
-  grunt.registerTask('default', ['jshint', 'validation']);
+  grunt.registerTask('default', ['jshint']);
   grunt.registerTask('prod', ['zip']);
 };

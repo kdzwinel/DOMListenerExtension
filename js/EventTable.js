@@ -15,6 +15,28 @@
         }
     }
 
+    function momentJS(date, timeOnly) {
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+        hours = hours % 24;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        const strTime = hours + ':' + minutes + ':' + seconds;
+
+        if (timeOnly) {
+            return strTime;
+        }
+
+        return date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear() + " " + strTime + ":" + date.getMilliseconds();
+      }
+
+    function formatDate(timestamp) {
+        const date = new Date(timestamp);
+
+        return `<span class="time" title="${momentJS(date, false)}">${momentJS(date, true)}</span>`;
+    }
+
     function formatEventDetails(event) {
         var details = "";
         switch (event.type) {
@@ -142,7 +164,7 @@
 
             tr.dataset.count = parseInt(tr.dataset.count || "1", 10) + 1;
 
-            tdAction.innerText = tr.dataset.count + ' x ' + event.type;
+            tdAction.innerHTML = tr.dataset.count + ' x ' + event.type + formatDate(event.date);
 
             tdDetails.querySelector('div').innerHTML += '<hr/>' + formatEventDetails(event);
 
@@ -160,7 +182,7 @@
 
         tr.classList.add(event.type.replace(' ', '-'));
 
-        tdAction.innerText = event.type;
+        tdAction.innerHTML = event.type + formatDate(event.date);
         tdTarget.innerHTML = '<div>' + formatNode(event.target) + '</div>';
         tdDetails.innerHTML = '<div>' + formatEventDetails(event) + '</div>';
 

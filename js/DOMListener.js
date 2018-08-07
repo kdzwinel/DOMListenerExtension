@@ -104,6 +104,8 @@
     }
 
     function logEvent(event) {
+        event.date = Date.now();
+
         bgPageConnection.postMessage({
             type: 'event',
             event: event

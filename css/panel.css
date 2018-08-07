@@ -87,6 +87,12 @@ nav > button {
     word-wrap: break-word;
 }
 
+.events .time {
+    display: block;
+    color: #b6b6b6;
+    font-size: small;
+}
+
 .events td:first-child {
     border-left: solid transparent 5px;
     padding-left: 4px;
@@ -127,7 +133,7 @@ nav > button {
 }
 
 .events thead .counter {
-    color: rgba(34, 34, 34, 0.33);
+    color: #b6b6b6;
 }
 
 .node:hover {
